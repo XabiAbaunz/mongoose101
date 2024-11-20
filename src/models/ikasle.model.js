@@ -26,4 +26,8 @@ ikasleSchema.pre('save', function(next) {
     next();
 });
 
+ikasleSchema.path('email').validate(function(email) {
+    return email.includes('@');
+}, 'Email-ak @ izan behar du');
+
 module.exports = mongoose.model('Ikasle', ikasleSchema);

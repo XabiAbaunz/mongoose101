@@ -31,4 +31,16 @@ exports.getIkasleById = async (req, res, next) => {
     }
 };
 
+exports.deleteIkasleById = async (req, res, next) => {
+    try {
+        const ikasle = await Ikasle.findByIdAndDelete(req.params.id);
+        if(!ikasle) {
+            return res.status(404).json({ message: 'Ikaslea ez da aurkitu' });
+        }
+        res.json(ikasle);
+    } catch (error) {
+        next(error);
+    }
+}
+
 // Gehitu beste kontroladoreak...
