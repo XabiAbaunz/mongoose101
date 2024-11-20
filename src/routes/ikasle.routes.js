@@ -6,6 +6,8 @@ router.get('/', ikasleController.getIkasleak);
 router.post('/', ikasleController.createIkasle);
 router.get('/:id', ikasleController.getIkasleById);
 router.delete('/:id', ikasleController.deleteIkasleById);
+router.put('/:emailZaharra', ikasleController.updateIkasleByEmail);
+
 // Gehitu beste routes-ak...
 
 module.exports = router;

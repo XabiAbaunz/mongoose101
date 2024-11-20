@@ -43,4 +43,29 @@ exports.deleteIkasleById = async (req, res, next) => {
     }
 }
 
+exports.updateIkasleByEmail = async (req, res) => {
+    const { emailZaharra } = req.params;
+    const { izena, adina, emailBerria } = req.body;
+
+    try {
+        const updates = {};
+            if (izena) updates.izena = izena;
+            if (adina) updates.adina = adina;
+            if (emailBerria) updates.email = emailBerria;
+        const updatedIkasle = await Ikasle.findOneAndUpdate(
+            { email: emailZaharra },
+            updates,
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedIkasle) {
+            return res.status(404).json({ message: 'Ikaslea ez da aurkitu' });
+        }
+
+        res.json(updatedIkasle);
+    } catch (err) {
+        res.status(500).json({ message: 'Errorea Ikaslea eguneratzean'});
+    }
+};
+
 // Gehitu beste kontroladoreak...
