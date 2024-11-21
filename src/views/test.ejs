@@ -94,6 +94,20 @@
                 alert(`Error updating ikasle: ${error.message}`);
             }
         }
+        async function createTalde() {
+            const taldeIzena = document.getElementById('taldeIzena').value;
+
+            const response = await fetch('/api/taldeak', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ taldeIzena })
+            });
+
+            const data = await response.json();
+            document.getElementById('newTalde').innerText = JSON.stringify(data, null, 2);
+        }
     </script>
 </head>
 <body onload="loadEmails()">
@@ -142,5 +156,13 @@
         <button type="submit">Edit</button>
     </form>
     <pre id="editedIkasle"></pre>
+    <h2>Create Talde</h2>
+    <form onsubmit="event.preventDefault(); createTalde();">
+        <label for="taldeIzena">Izena:</label>
+        <input type="text" id="taldeIzena" name="Talde Izena" required>
+        <br>
+        <button type="submit">Create</button>
+    </form>
+    <pre id="newTalde"></pre>
 </body>
 </html>

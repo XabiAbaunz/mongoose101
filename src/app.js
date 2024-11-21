@@ -6,6 +6,7 @@ const express = require('express');
 const connectDB = require('./config/database');
 const ikasleRoutes = require('./routes/ikasle.routes');
 const errorHandler = require('./middleware/error.middleware');
+const taldeRoutes = require('./routes/talde.routes');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.static('public'));
 
 // Routes
 app.use('/api/ikasleak', ikasleRoutes);
+app.use('/api/taldeak', taldeRoutes);
 
 app.get('/', (req, res) => {
     res.render('index');
