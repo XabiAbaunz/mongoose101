@@ -9,7 +9,6 @@
             const response = await fetch('/api/ikasleak');
             const data = await response.json();
             document.getElementById('ikasleak').innerText = JSON.stringify(data, null, 2);
-            loadEmails();
         }
 
         async function createIkasle() {
@@ -51,23 +50,29 @@
             const data = await response.json();
 
             const comboBox = document.getElementById('emailSelect');
+            const comboBox2 = document.getElementById('emailSelect2')
             comboBox.innerHTML = '<option value="" disabled selected>Choose an ikasle</option>';
+            comboBox2.innerHTML = '<option value="" disabled selected>Choose an ikasle</option>';
 
             data.forEach(ikasle => {
                 let option = document.createElement('option');
                 option.text = ikasle.email;
-                option.value = ikasle.email;
+                option.value = ikasle._id;
+                let option2 = document.createElement('option');
+                option2.text = ikasle.email;
+                option2.value = ikasle._id;
                 comboBox.appendChild(option);
+                comboBox2.appendChild(option2);
             });
         }
 
         async function editIkasle() {
-            const emailZaharra = document.getElementById('emailSelect').value;
+            const id = document.getElementById('emailSelect').value;
             const izena = document.getElementById('izena2').value;
             const adina = document.getElementById('adina2').value;
-            const emailBerria = document.getElementById('email2').value;
+            const email = document.getElementById('email2').value;
 
-            if (!emailZaharra) {
+            if (!id) {
                 alert("Editatzeko ikasle bat aukeratu.");
                 return;
             }
@@ -75,9 +80,9 @@
             const body = {};
             if (izena) body.izena = izena;
             if (adina) body.adina = adina;
-            if (emailBerria) body.emailBerria = emailBerria;
+            if (email) body.email = email;
 
-            const response = await fetch(`/api/ikasleak/${emailZaharra}`, {
+            const response = await fetch(`/api/ikasleak/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -94,23 +99,62 @@
                 alert(`Error updating ikasle: ${error.message}`);
             }
         }
+
         async function createTalde() {
-            const taldeIzena = document.getElementById('taldeIzena').value;
+            const izena = document.getElementById('taldeIzena').value;
 
             const response = await fetch('/api/taldeak', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ taldeIzena })
+                body: JSON.stringify({ izena })
             });
 
             const data = await response.json();
             document.getElementById('newTalde').innerText = JSON.stringify(data, null, 2);
+            loadTaldeak();
+        }
+
+        async function loadTaldeak() {
+            const response = await fetch('/api/taldeak');
+            const data = await response.json();
+
+            const comboBox = document.getElementById('taldeSelect');
+
+            data.forEach(talde => {
+                let option = document.createElement('option');
+                option.text = talde.izena;
+                option.value = talde._id;
+                comboBox.appendChild(option);
+            });
+        }
+
+        async function assignIkasleToTalde() {
+            const taldeId = document.getElementById('taldeSelect').value;
+            const ikasleId = document.getElementById('emailSelect2').value;
+
+            const response = await fetch('/api/taldeak/assign', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ taldeId, ikasleId })
+            });
+
+            const data = await response.json();
+            document.getElementById('assignedTalde').innerText = JSON.stringify(data, null, 2);
+            loadTaldeak();
+        }
+
+        async function fetchTaldeak() {
+            const response = await fetch('/api/taldeak');
+            const data = await response.json();
+            document.getElementById('taldeak').innerText = JSON.stringify(data, null, 2);
         }
     </script>
 </head>
-<body onload="loadEmails()">
+<body onload="loadEmails(); loadTaldeak()">
     <h1>Test Ikasleak API</h1>
     <button onclick="fetchIkasleak()">Get Ikasleak</button>
     <pre id="ikasleak"></pre>
@@ -164,5 +208,23 @@
         <button type="submit">Create</button>
     </form>
     <pre id="newTalde"></pre>
+    <h2>Assign Ikasle to Talde</h2>
+    <form onsubmit="event.preventDefault(); assignIkasleToTalde();">
+        <label for="taldeSelect">Talde:</label>
+        <select id="taldeSelect" name="taldeSelect" required>
+            <option value="" disabled selected>Choose a talde</option>
+        </select>
+        <br>
+        <label for="ikasleSelect">Ikasle:</label>
+        <select id="emailSelect2" name="emailSelect2" required>
+            <option value="" disabled selected>Choose an ikasle</option>
+        </select>
+        <br>
+        <button type="submit">Assign</button>
+    </form>
+    <pre id="assignedTalde"></pre>
+    <h1>Get Taldeak</h1>
+    <button onclick="fetchTaldeak()">Get Taldeak</button>
+    <pre id="taldeak"></pre>
 </body>
 </html>
